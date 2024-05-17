@@ -5,8 +5,8 @@
     android:id="@+id/signup"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignupActivity"
-    android:background="#343434">
+    android:background="#343434"
+    tools:context=".SignupActivity">
 
         <ImageView
             android:id="@+id/imageView4"
@@ -28,7 +28,7 @@
             android:drawableStart="@drawable/password"
             android:ems="10"
             android:hint="  Password"
-            android:inputType="text"
+            android:inputType="textPassword"
             android:textColor="#ffffff"
             android:textColorHint="#ffffff"
             app:layout_constraintBottom_toTopOf="@+id/button_signup"
@@ -45,7 +45,7 @@
             android:drawableStart="@drawable/name"
             android:ems="10"
             android:hint="  Email"
-            android:inputType="text"
+            android:inputType="textEmailAddress"
             android:textColor="#ffffff"
             android:textColorHint="#ffffff"
             app:layout_constraintBottom_toTopOf="@+id/TextName"
@@ -61,7 +61,7 @@
             android:drawableStart="@drawable/name"
             android:ems="10"
             android:hint="  Name"
-            android:inputType="text"
+            android:inputType="textPersonName"
             android:textColor="#ffffff"
             android:textColorHint="#ffffff"
             app:layout_constraintBottom_toTopOf="@+id/TextPassword1"
@@ -79,7 +79,7 @@
             android:drawableStart="@drawable/password"
             android:ems="10"
             android:hint="  Password"
-            android:inputType="text"
+            android:inputType="textPassword"
             android:textColor="#ffffff"
             android:textColorHint="#ffffff"
             app:layout_constraintBottom_toTopOf="@+id/TextPassword2"
@@ -92,7 +92,7 @@
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="MoneyMinder"
             android:textColor="#d66a22"
             android:textSize="30dp"
             android:textStyle="bold"
@@ -101,8 +101,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.127"
-            tools:text="MoneyMinder" />
+            app:layout_constraintVertical_bias="0.127" />
 
         <Button
             android:id="@+id/button_signup"
