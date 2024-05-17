@@ -29,7 +29,6 @@ class MainActivity : AppCompatActivity() {
             // Створюємо інтент для переходу на активність activity_login
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
-
         }
 
     }
