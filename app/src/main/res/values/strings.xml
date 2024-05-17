@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MoneyMinder</string>
+    <string name="notes">Notes</string>
+    <string name="diagrams">Diagrams</string>
+    <string name="reports">Reports</string>
+    <string name="profile">Profile</string>
 </resources>
