@@ -13,6 +13,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaType
 import org.json.JSONObject
 import java.io.IOException
+import java.util.regex.Pattern
 
 class SignupActivity : AppCompatActivity() {
 
@@ -40,6 +41,8 @@ class SignupActivity : AppCompatActivity() {
             val password2 = password2EditText.text.toString()
             if (name.isEmpty() || email.isEmpty() || password1.isEmpty() || password2.isEmpty()) {
                 Toast.makeText(this, "All fields are required!", Toast.LENGTH_SHORT).show()
+            } else if (!isValidEmail(email)) {
+                Toast.makeText(this, "Invalid email address", Toast.LENGTH_SHORT).show()
             } else if (password1 != password2) {
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
             } else {
@@ -51,6 +54,12 @@ class SignupActivity : AppCompatActivity() {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        val emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$"
+        val pattern = Pattern.compile(emailPattern)
+        return pattern.matcher(email).matches()
     }
 
     private fun registerUser(name: String, email: String, password: String) {
@@ -81,10 +90,11 @@ class SignupActivity : AppCompatActivity() {
                 runOnUiThread {
                     if (response.isSuccessful) {
                         try {
+                            Log.d("SignupActivity", "Response body: $responseBody") // Добавлено логирование ответа
                             val jsonResponse = JSONObject(responseBody)
                             if (jsonResponse.getString("status") == "success") {
-                                val userId = jsonResponse.getInt("user_id") // Получаем user ID
-                                saveUserId(userId) // Сохраняем user ID в SharedPreferences
+                                val userId = jsonResponse.getInt("user_id")
+                                saveUserId(userId)
                                 Toast.makeText(applicationContext, "Registration successful", Toast.LENGTH_SHORT).show()
                                 val intent = Intent(this@SignupActivity, DashboardActivity::class.java)
                                 startActivity(intent)
