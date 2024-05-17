@@ -1,5 +1,6 @@
 package com.example.moneyminder
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -11,6 +12,7 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.utils.ColorTemplate
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class PieChartActivity : AppCompatActivity() {
 
@@ -26,7 +28,7 @@ class PieChartActivity : AppCompatActivity() {
         pieChart = findViewById(R.id.pieChart)
         spinnerCategories = findViewById(R.id.spinnerCategories)
 
-        val categories = arrayOf("All", "Transport", "Food", "Sport")
+        val categories = arrayOf("All", "Transport", "Sport", "Food", "Restaurants", "Clothing", "Other")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerCategories.adapter = adapter
@@ -44,27 +46,54 @@ class PieChartActivity : AppCompatActivity() {
                 // Do nothing
             }
         })
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.menu_dashboard -> {
+                    val intent = Intent(this, DashboardActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.menu_diagram -> {
+                    // Переход на PieChartActivity
+                    true
+                }
+                R.id.menu_add_transaction -> {
+                    val intent = Intent(this, DashboardActivity::class.java)
+                    intent.putExtra("openAddTransaction", true)
+                    startActivity(intent)
+                    true
+                }
+                R.id.menu_profile -> {
+                    val intent = Intent(this, ProfileActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> false
+            }
+        }
+
+        // Установка текущего элемента панели навигации как "Profile"
+        bottomNavigationView.selectedItemId = R.id.menu_diagram
     }
 
     private fun updatePieChart(selectedCategory: String) {
-        val entries = when (selectedCategory) {
-            "All" -> {
-                // Пример данных для всех категорий
-                val totalAmount = allTransactions.sumByDouble { it.amount }
-                allTransactions.groupBy { it.category }
-                    .map { entry -> PieEntry((entry.value.sumByDouble { it.amount } / totalAmount * 100).toFloat(), entry.key) }
+        val entries = mutableListOf<PieEntry>()
+
+        if (selectedCategory == "All") {
+            val groupedTransactions = allTransactions.groupBy { it.category }
+            groupedTransactions.forEach { (category, transactions) ->
+                val totalAmount = transactions.sumByDouble { it.amount }
+                entries.add(PieEntry(totalAmount.toFloat(), category))
             }
-            else -> {
-                // Пример данных для одной выбранной категории
-                val selectedTransactions = allTransactions.filter { it.category == selectedCategory }
-                val totalAmountForSelectedCategory = selectedTransactions.sumByDouble { it.amount }
-                val totalAmountForAllCategories = allTransactions.sumByDouble { it.amount }
-                val percentForSelectedCategory = (totalAmountForSelectedCategory / totalAmountForAllCategories * 100).toFloat()
-                listOf(PieEntry(percentForSelectedCategory, selectedCategory)) +
-                        allTransactions.groupBy { it.category }
-                            .map { entry -> PieEntry((entry.value.sumByDouble { it.amount } / totalAmountForAllCategories * 100).toFloat(), entry.key) }
-            }
+        } else {
+            val selectedTransactions = allTransactions.filter { it.category == selectedCategory }
+            val totalAmount = selectedTransactions.sumByDouble { it.amount }
+            entries.add(PieEntry(totalAmount.toFloat(), selectedCategory))
         }
+//(selectedCategory != "All")
+        val totalAmountForAllCategories = allTransactions.sumByDouble { it.amount }
+        entries.add(PieEntry(totalAmountForAllCategories.toFloat(), "All"))
 
         val dataSet = PieDataSet(entries, "Categories")
         dataSet.colors = ColorTemplate.COLORFUL_COLORS.asList()
