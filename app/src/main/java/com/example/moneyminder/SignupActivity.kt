@@ -2,6 +2,7 @@ package com.example.moneyminder
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -37,13 +38,15 @@ class SignupActivity : AppCompatActivity() {
             val email = emailEditText.text.toString()
             val password1 = password1EditText.text.toString()
             val password2 = password2EditText.text.toString()
-
-            if (password1 == password2) {
-                // Пароли совпадают, выполнить регистрацию
-                registerUser(name, email, password1)
-            } else {
-                // Пароли не совпадают, вывести сообщение об ошибке
+            if (name.isEmpty() || email.isEmpty() || password1.isEmpty() || password2.isEmpty()) {
+                // Если какое-то из полей пустое, выводим сообщение
+                Toast.makeText(this, "All fields are required!", Toast.LENGTH_SHORT).show()
+            } else if (password1 != password2) {
+                // Если пароли не совпадают, выводим сообщение
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
+            } else {
+                // Если все поля заполнены и пароли совпадают, можно выполнить регистрацию
+                registerUser(name, email, password1)
             }
         }
 
@@ -56,10 +59,11 @@ class SignupActivity : AppCompatActivity() {
     private fun registerUser(name: String, email: String, password: String) {
         val client = OkHttpClient()
 
-        val json = JSONObject()
-        json.put("name", name)
-        json.put("email", email)
-        json.put("password", password)
+        val json = JSONObject().apply {
+            put("name", name)
+            put("email", email)
+            put("password", password)
+        }
 
         val requestBody = json.toString().toRequestBody("application/json".toMediaType())
 
@@ -79,8 +83,8 @@ class SignupActivity : AppCompatActivity() {
                 val responseBody = response.body?.string()
                 runOnUiThread {
                     if (response.isSuccessful) {
-                        Toast.makeText(applicationContext, "Registration successful", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this@SignupActivity, LoginActivity::class.java)
+                        Toast.makeText(applicationContext, responseBody, Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@SignupActivity, DashboardActivity::class.java)
                         startActivity(intent)
                     } else {
                         Toast.makeText(applicationContext, "Registration failed: $responseBody", Toast.LENGTH_SHORT).show()
