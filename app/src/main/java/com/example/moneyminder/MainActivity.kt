@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity() {
         val regButton = findViewById<Button>(R.id.button_reg)
 
         loginButton.setOnClickListener {
-            loginButton.setBackgroundResource(R.drawable.background_button_pressed)
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
