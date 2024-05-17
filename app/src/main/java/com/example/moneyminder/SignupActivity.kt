@@ -6,32 +6,26 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import okhttp3.*
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.MediaType.Companion.toMediaType
+import org.json.JSONObject
+import java.io.IOException
 
 class SignupActivity : AppCompatActivity() {
 
     private lateinit var nameEditText: EditText
     private lateinit var emailEditText: EditText
-    private lateinit var loginEditText: EditText
     private lateinit var password1EditText: EditText
     private lateinit var password2EditText: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_signup)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.signup)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
 
         nameEditText = findViewById(R.id.TextName)
         emailEditText = findViewById(R.id.TextEmail)
-        loginEditText = findViewById(R.id.TextLogin)
         password1EditText = findViewById(R.id.TextPassword1)
         password2EditText = findViewById(R.id.TextPassword2)
 
@@ -41,16 +35,14 @@ class SignupActivity : AppCompatActivity() {
         signupButton.setOnClickListener {
             val name = nameEditText.text.toString()
             val email = emailEditText.text.toString()
-            val login = loginEditText.text.toString()
             val password1 = password1EditText.text.toString()
             val password2 = password2EditText.text.toString()
 
             if (password1 == password2) {
-                // Если пароли совпадают, можно выполнить действие, например, перейти к MainActivity
-                val intent = Intent(this, DashboardActivity::class.java)
-                startActivity(intent)
+                // Пароли совпадают, выполнить регистрацию
+                registerUser(name, email, password1)
             } else {
-                // Если пароли не совпадают, вывести сообщение об ошибке
+                // Пароли не совпадают, вывести сообщение об ошибке
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
             }
         }
@@ -59,5 +51,42 @@ class SignupActivity : AppCompatActivity() {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private fun registerUser(name: String, email: String, password: String) {
+        val client = OkHttpClient()
+
+        val json = JSONObject()
+        json.put("name", name)
+        json.put("email", email)
+        json.put("password", password)
+
+        val requestBody = json.toString().toRequestBody("application/json".toMediaType())
+
+        val request = Request.Builder()
+            .url("http://192.168.1.214/moneyminder/registration.php")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    Toast.makeText(applicationContext, "Registration failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val responseBody = response.body?.string()
+                runOnUiThread {
+                    if (response.isSuccessful) {
+                        Toast.makeText(applicationContext, "Registration successful", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@SignupActivity, LoginActivity::class.java)
+                        startActivity(intent)
+                    } else {
+                        Toast.makeText(applicationContext, "Registration failed: $responseBody", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
     }
 }
