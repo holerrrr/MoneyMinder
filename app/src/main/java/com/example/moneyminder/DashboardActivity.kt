@@ -77,10 +77,9 @@ class DashboardActivity : AppCompatActivity() {
         }
         listView.setOnItemLongClickListener { parent, view, position, id ->
             val transaction = transactions[position]
-            showDeleteTransactionDialog(transaction, position)
-            true // Возвращаем true, чтобы сообщить обработчику, что событие обработано
+            showDeleteTransactionDialog(transaction)
+            true
         }
-
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
@@ -118,55 +117,6 @@ class DashboardActivity : AppCompatActivity() {
         }
 
     }
-    private fun showDeleteTransactionDialog(transaction: Transaction, position: Int) {
-        val alertDialogBuilder = AlertDialog.Builder(this)
-        alertDialogBuilder.setTitle("Delete Transaction")
-        alertDialogBuilder.setMessage("Are you sure you want to delete this transaction?")
-        alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
-            // Удаление транзакции из базы данных
-            val sharedPreferences = getSharedPreferences("MoneyMinderPrefs", MODE_PRIVATE)
-            val userId = sharedPreferences.getInt("user_id", -1)
-            deleteTransactionFromDatabase(userId, position)
-        }
-        alertDialogBuilder.setNegativeButton("No") { dialog, _ ->
-            dialog.dismiss()
-        }
-        val alertDialog = alertDialogBuilder.create()
-        alertDialog.show()
-    }
-
-    private fun deleteTransactionFromDatabase(userId: Int, position: Int) {
-        GlobalScope.launch(Dispatchers.IO) {
-            try {
-                val client = OkHttpClient()
-
-                val json = JSONObject().apply {
-                    put("user_id", userId)
-                    put("position", position)
-                }
-
-                val requestBody = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
-
-                val request = Request.Builder()
-                    .url("http://192.168.1.214/moneyminder/delete_transaction.php")
-                    .post(requestBody)
-                    .build()
-
-                val response = client.newCall(request).execute()
-
-                if (!response.isSuccessful) {
-                    Log.e("DashboardActivity", "Failed to delete transaction: ${response.message}")
-                } else {
-                    // Удаляем элемент из списка транзакций
-                    transactions.removeAt(position)
-                    // Обновляем список транзакций после успешного удаления
-                    loadTransactionsFromDatabase(userId)
-                }
-            } catch (e: Exception) {
-                Log.e("DashboardActivity", "Error deleting transaction: ${e.message}")
-            }
-        }
-    }
 
     private fun showAddTransactionPanel() {
         val bottomSheetDialog = BottomSheetDialog(this)
@@ -189,7 +139,12 @@ class DashboardActivity : AppCompatActivity() {
 
             if (description.isNotEmpty() && amount != null) {
                 // Добавление новой транзакции в список и обновление адаптера
-                val newTransaction = Transaction(description, amount, category)
+                val newTransaction = Transaction(
+                    id = 0, // Замените на правильный идентификатор, если необходимо
+                    description = description,
+                    amount = amount,
+                    category = category
+                )
                 transactions.add(newTransaction)
 
                 // Добавление транзакции в базу данных
@@ -236,7 +191,7 @@ class DashboardActivity : AppCompatActivity() {
                 val requestBody = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
                 val request = Request.Builder()
-                    .url("http://192.168.1.214/moneyminder/get_transactions.php")
+                    .url("http://192.168.1.250/moneyminder/get_transactions.php")
                     .post(requestBody)
                     .build()
 
@@ -251,10 +206,11 @@ class DashboardActivity : AppCompatActivity() {
                     transactions.clear() // Очищаем список перед добавлением новых данных
                     for (i in 0 until jsonArray.length()) {
                         val jsonObject = jsonArray.getJSONObject(i)
+                        val id = jsonObject.getInt("id") // Предположим, что идентификатор транзакции есть в JSON
                         val description = jsonObject.getString("description")
                         val amount = jsonObject.getDouble("Sum")
                         val category = jsonObject.getString("category")
-                        transactions.add(Transaction(description, amount, category))
+                        transactions.add(Transaction(id, description, amount, category))
                     }
                     runOnUiThread {
                         val selectedCategory = findViewById<Spinner>(R.id.spinnerCategories).selectedItem.toString()
@@ -284,7 +240,7 @@ class DashboardActivity : AppCompatActivity() {
                 val client = OkHttpClient()
 
                 val request = Request.Builder()
-                    .url("http://192.168.1.214/moneyminder/get_categories.php")
+                    .url("http://192.168.1.250/moneyminder/get_categories.php")
                     .build()
 
                 val response = client.newCall(request).execute()
@@ -323,7 +279,7 @@ class DashboardActivity : AppCompatActivity() {
                 val requestBody = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
                 val request = Request.Builder()
-                    .url("http://192.168.1.214/moneyminder/get_balance.php")
+                    .url("http://192.168.1.250/moneyminder/get_balance.php")
                     .post(requestBody)
                     .build()
 
@@ -369,7 +325,7 @@ class DashboardActivity : AppCompatActivity() {
                 val requestBody = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
                 val request = Request.Builder()
-                    .url("http://192.168.1.214/moneyminder/add_transaction.php")
+                    .url("http://192.168.1.250/moneyminder/add_transaction.php")
                     .post(requestBody)
                     .build()
 
@@ -400,6 +356,58 @@ class DashboardActivity : AppCompatActivity() {
             showAddTransactionPanel()
         }
     }
+    private fun showDeleteTransactionDialog(transaction: Transaction) {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.setTitle("Delete Transaction")
+        alertDialogBuilder.setMessage("Are you sure you want to delete this transaction?")
+        alertDialogBuilder.setPositiveButton("Yes") { _, _ ->
+            // Удаление транзакции из базы данных
+            val sharedPreferences = getSharedPreferences("MoneyMinderPrefs", MODE_PRIVATE)
+            val userId = sharedPreferences.getInt("user_id", -1)
+            deleteTransactionFromDatabase(userId, transaction)
+        }
+        alertDialogBuilder.setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss()
+        }
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    private fun deleteTransactionFromDatabase(userId: Int, transaction: Transaction) {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val client = OkHttpClient()
+
+                val json = JSONObject().apply {
+                    put("user_id", userId)
+                    put("transaction_id", transaction.id) // Передача transaction_id как Expenses_ID
+                }
+
+                val requestBody = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
+
+                val request = Request.Builder()
+                    .url("http://192.168.1.250/moneyminder/delete_transaction.php")
+                    .post(requestBody)
+                    .build()
+
+                val response = client.newCall(request).execute()
+                Log.d("DashboardActivity", "Deleting transaction with ID: ${transaction.id}")
+
+                val responseBody = response.body?.string()
+                Log.d("DashboardActivity", "Response: $responseBody")
+
+                if (!response.isSuccessful) {
+                    Log.e("DashboardActivity", "Failed to delete transaction: ${response.message}")
+                } else {
+                    // Обновляем список транзакций после успешного удаления
+                    loadTransactionsFromDatabase(userId)
+                }
+            } catch (e: Exception) {
+                Log.e("DashboardActivity", "Error deleting transaction: ${e.message}")
+            }
+        }
+    }
+
 }
 
-data class Transaction(val description: String, val amount: Double, val category: String)
+data class Transaction(val id: Int, val description: String, val amount: Double, val category: String)

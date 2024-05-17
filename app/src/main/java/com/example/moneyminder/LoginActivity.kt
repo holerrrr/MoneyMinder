@@ -52,7 +52,7 @@ class LoginActivity : AppCompatActivity() {
         val requestBody = json.toString().toRequestBody("application/json".toMediaType())
 
         val request = Request.Builder()
-            .url("http://192.168.1.214/moneyminder/login.php")
+            .url("http://192.168.1.250/moneyminder/login.php")
             .post(requestBody)
             .addHeader("Content-Type", "application/json")
             .build()
