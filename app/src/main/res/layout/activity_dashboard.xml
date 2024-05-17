@@ -10,7 +10,7 @@
         android:id="@+id/textViewBudget"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Budget: 1000"
+        android:text="Budget: "
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
