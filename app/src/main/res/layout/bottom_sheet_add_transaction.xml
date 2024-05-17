@@ -11,22 +11,25 @@
         android:id="@+id/spinnerCategory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        tools:ignore="TouchTargetSizeCheck" />
 
     <EditText
         android:id="@+id/editTextDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:hint="Description"
-        android:layout_marginBottom="16dp" />
+        tools:ignore="TouchTargetSizeCheck" />
 
     <EditText
         android:id="@+id/editTextAmount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:hint="Amount"
         android:inputType="numberDecimal"
-        android:layout_marginBottom="16dp" />
+        tools:ignore="TouchTargetSizeCheck" />
 
     <Button
         android:id="@+id/buttonAddTransaction"

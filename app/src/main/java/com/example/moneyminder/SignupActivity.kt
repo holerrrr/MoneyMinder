@@ -39,13 +39,10 @@ class SignupActivity : AppCompatActivity() {
             val password1 = password1EditText.text.toString()
             val password2 = password2EditText.text.toString()
             if (name.isEmpty() || email.isEmpty() || password1.isEmpty() || password2.isEmpty()) {
-                // Если какое-то из полей пустое, выводим сообщение
                 Toast.makeText(this, "All fields are required!", Toast.LENGTH_SHORT).show()
             } else if (password1 != password2) {
-                // Если пароли не совпадают, выводим сообщение
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
             } else {
-                // Если все поля заполнены и пароли совпадают, можно выполнить регистрацию
                 registerUser(name, email, password1)
             }
         }
@@ -68,7 +65,7 @@ class SignupActivity : AppCompatActivity() {
         val requestBody = json.toString().toRequestBody("application/json".toMediaType())
 
         val request = Request.Builder()
-            .url("https://192.168.1.217/moneyminder/registration.php")
+            .url("http://192.168.1.214/moneyminder/registration.php")
             .post(requestBody)
             .build()
 
@@ -83,14 +80,33 @@ class SignupActivity : AppCompatActivity() {
                 val responseBody = response.body?.string()
                 runOnUiThread {
                     if (response.isSuccessful) {
-                        Toast.makeText(applicationContext, responseBody, Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this@SignupActivity, DashboardActivity::class.java)
-                        startActivity(intent)
+                        try {
+                            val jsonResponse = JSONObject(responseBody)
+                            if (jsonResponse.getString("status") == "success") {
+                                val userId = jsonResponse.getInt("user_id") // Получаем user ID
+                                saveUserId(userId) // Сохраняем user ID в SharedPreferences
+                                Toast.makeText(applicationContext, "Registration successful", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(this@SignupActivity, DashboardActivity::class.java)
+                                startActivity(intent)
+                            } else {
+                                Toast.makeText(applicationContext, "Registration failed: ${jsonResponse.getString("message")}", Toast.LENGTH_SHORT).show()
+                            }
+                        } catch (e: Exception) {
+                            Log.e("SignupActivity", "Error parsing response: ${e.message}")
+                            Toast.makeText(applicationContext, "Registration failed: Invalid response from server", Toast.LENGTH_SHORT).show()
+                        }
                     } else {
                         Toast.makeText(applicationContext, "Registration failed: $responseBody", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         })
+    }
+
+    private fun saveUserId(userId: Int) {
+        val sharedPreferences = getSharedPreferences("MoneyMinderPrefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt("user_id", userId)
+        editor.apply()
     }
 }

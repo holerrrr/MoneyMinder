@@ -33,8 +33,10 @@ class PieChartActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinnerCategories.adapter = adapter
 
+//todo: wertyjk,mnbfdrtukl,mnfdertyukmnvdertyukmnvcdertyujkmnbvdrtyujmnbvcdrtyjnbvcftyuj
+
         // Загрузка всех транзакций
-        allTransactions = loadTransactionsFromDatabase()
+        //allTransactions = loadTransactionsFromDatabase()
 
         spinnerCategories.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -112,7 +114,7 @@ class PieChartActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadTransactionsFromDatabase(): List<Transaction> {
+    /*private fun loadTransactionsFromDatabase(): List<Transaction> {
         // Просто для тестирования, создадим список транзакций для каждой категории
         return listOf(
             Transaction("Bus ticket", 15.0, "Transport"),
@@ -122,5 +124,6 @@ class PieChartActivity : AppCompatActivity() {
             Transaction("T-shirt", 20.0, "Clothing"),
             Transaction("Book", 15.0, "Other")
         )
-    }
+    }*/
 }
+//data class Transaction(val description: String, val amount: Double, val category: String)
