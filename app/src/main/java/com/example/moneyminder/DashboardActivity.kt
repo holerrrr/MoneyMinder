@@ -206,11 +206,18 @@ class DashboardActivity : AppCompatActivity() {
                     transactions.clear() // Очищаем список перед добавлением новых данных
                     for (i in 0 until jsonArray.length()) {
                         val jsonObject = jsonArray.getJSONObject(i)
-                        val id = jsonObject.getInt("id") // Предположим, что идентификатор транзакции есть в JSON
-                        val description = jsonObject.getString("description")
-                        val amount = jsonObject.getDouble("Sum")
-                        val category = jsonObject.getString("category")
-                        transactions.add(Transaction(id, description, amount, category))
+
+                        val id = jsonObject.optInt("id", -1)
+                        val description = jsonObject.optString("description", "Unknown")
+                        val amount = jsonObject.optDouble("Sum", 0.0)
+                        val category = jsonObject.optString("category", "Unknown")
+
+                        // Проверка на валидность данных
+                        if (id != -1 && description != "Unknown" && category != "Unknown") {
+                            transactions.add(Transaction(id, description, amount, category))
+                        } else {
+                            Log.e("DashboardActivity", "Invalid transaction data: $jsonObject")
+                        }
                     }
                     runOnUiThread {
                         val selectedCategory = findViewById<Spinner>(R.id.spinnerCategories).selectedItem.toString()
@@ -233,6 +240,7 @@ class DashboardActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun loadCategoriesFromDatabase() {
         GlobalScope.launch(Dispatchers.IO) {
