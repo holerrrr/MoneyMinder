@@ -48,7 +48,7 @@ class SignupActivity : AppCompatActivity() {
             // Теперь можно выполнить нужные действия с этими данными, например, отправить их на сервер или сохранить в базу данных
             // Например:
             if (password1 == password2) {
-                val intent = Intent(this, LoginActivity::class.java)
+                val intent = Intent(this, MainActivity2::class.java)
                 startActivity(intent)
             } else {
                 // Пароли не совпадают, выведите сообщение об ошибке
@@ -56,10 +56,11 @@ class SignupActivity : AppCompatActivity() {
             }
         }
 
-        signupButton.setOnClickListener {
+        textViewLogin.setOnClickListener {
             // Створюємо інтент для переходу на активність activity_login
-            val intent = Intent(this, MainActivity2::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
+
         }
     }
 

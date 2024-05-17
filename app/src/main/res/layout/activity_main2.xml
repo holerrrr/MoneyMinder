@@ -8,8 +8,71 @@
     android:background="#343434"
     tools:context=".MainActivity2">
 
-    <Button
-        android:id="@+id/button2"
+    <LinearLayout
+        android:id="@+id/list_layout"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Graph"
+                android:textSize="24sp" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:padding="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/button_add"
+            android:backgroundTint="#55FF55"
+            android:layout_marginRight="10dp"
+            android:text="add"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/button_remove"
+            android:backgroundTint="#FF5555"
+            android:layout_marginLeft="10dp"
+            android:text="history"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:padding="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <!-- <Button
+        android:id="@+id/button_remove"
         android:layout_width="163dp"
         android:layout_height="157dp"
         android:layout_marginStart="30dp"
@@ -23,7 +86,7 @@
         tools:ignore="SpeakableTextPresentCheck" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/button_add"
         android:layout_width="163dp"
         android:layout_height="157dp"
         android:layout_marginStart="30dp"
@@ -34,6 +97,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.972"
-        tools:ignore="SpeakableTextPresentCheck" />
+        tools:ignore="SpeakableTextPresentCheck" />-->
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
