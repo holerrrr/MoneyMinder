@@ -88,7 +88,7 @@ class ProfileActivity : AppCompatActivity() {
                 val requestBody = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
                 val request = Request.Builder()
-                    .url("http://192.168.1.214/moneyminder/get_balance.php")
+                    .url("http://192.168.1.250/moneyminder/get_balance.php")
                     .post(requestBody)
                     .build()
 
@@ -133,7 +133,7 @@ class ProfileActivity : AppCompatActivity() {
                 val requestBody = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
                 val request = Request.Builder()
-                    .url("http://192.168.1.214/moneyminder/update_balance.php")
+                    .url("http://192.168.1.250/moneyminder/update_balance.php")
                     .post(requestBody)
                     .build()
 
