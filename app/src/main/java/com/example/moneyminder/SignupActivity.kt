@@ -18,6 +18,7 @@ class SignupActivity : AppCompatActivity() {
     private lateinit var loginEditText: EditText
     private lateinit var password1EditText: EditText
     private lateinit var password2EditText: EditText
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -27,6 +28,7 @@ class SignupActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         nameEditText = findViewById(R.id.TextName)
         emailEditText = findViewById(R.id.TextEmail)
         loginEditText = findViewById(R.id.TextLogin)
@@ -36,32 +38,26 @@ class SignupActivity : AppCompatActivity() {
         val textViewLogin = findViewById<TextView>(R.id.textViewLogin)
         val signupButton = findViewById<Button>(R.id.button_signup)
 
-
         signupButton.setOnClickListener {
-            // Получаем значения из полей ввода
             val name = nameEditText.text.toString()
             val email = emailEditText.text.toString()
             val login = loginEditText.text.toString()
             val password1 = password1EditText.text.toString()
             val password2 = password2EditText.text.toString()
 
-            // Теперь можно выполнить нужные действия с этими данными, например, отправить их на сервер или сохранить в базу данных
-            // Например:
             if (password1 == password2) {
-                val intent = Intent(this, MainActivity2::class.java)
+                // Если пароли совпадают, можно выполнить действие, например, перейти к MainActivity
+                val intent = Intent(this, DashboardActivity::class.java)
                 startActivity(intent)
             } else {
-                // Пароли не совпадают, выведите сообщение об ошибке
+                // Если пароли не совпадают, вывести сообщение об ошибке
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
             }
         }
 
         textViewLogin.setOnClickListener {
-            // Створюємо інтент для переходу на активність activity_login
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
-
         }
     }
-
 }
