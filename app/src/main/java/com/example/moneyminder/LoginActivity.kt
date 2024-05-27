@@ -1,13 +1,11 @@
 package com.example.moneyminder
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.IntentSender
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -20,12 +18,10 @@ import com.google.android.gms.common.api.ApiException
 class LoginActivity : AppCompatActivity() {
     private lateinit var oneTapClient: SignInClient
     private lateinit var signUpRequest: BeginSignInRequest
-    private val REQ_ONE_TAP = 2  // Can be any integer unique to the Activity
-    private var showOneTapUI = true
+    private val REQ_ONE_TAP = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_login)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.login)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -39,20 +35,21 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // Инициализация One Tap API
         oneTapClient = Identity.getSignInClient(this)
         signUpRequest = BeginSignInRequest.builder()
             .setGoogleIdTokenRequestOptions(
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
-                    // Your server's client ID, not your Android client ID.
                     .setServerClientId(getString(R.string.web_client_id))
-                    // Show all accounts on the device.
                     .setFilterByAuthorizedAccounts(false)
                     .build())
             .build()
 
+        // Обработчик нажатия кнопки Google Sign-In
         val googleButton = findViewById<Button>(R.id.button_google)
         googleButton.setOnClickListener {
+            Log.d(TAG, "Google sign-in button clicked")
             oneTapClient.beginSignIn(signUpRequest)
                 .addOnSuccessListener(this) { result ->
                     try {
@@ -65,8 +62,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
                 .addOnFailureListener(this) { e ->
-                    // No Google Accounts found. Just continue presenting the signed-out UI.
-                    Log.d(TAG, e.localizedMessage)
+                    Log.d(TAG, "One Tap SignIn failed: ${e.localizedMessage}")
                 }
         }
     }
@@ -77,20 +73,19 @@ class LoginActivity : AppCompatActivity() {
             try {
                 val credential: SignInCredential = oneTapClient.getSignInCredentialFromIntent(data)
                 val idToken = credential.googleIdToken
-                when {
-                    idToken != null -> {
-                        // Use the ID token to authenticate with your backend
-                        Log.d(TAG, "Got ID token.")
-                        // Continue with authenticated user
-                    }
-                    else -> {
-                        // Shouldn't happen
-                        Log.d(TAG, "No ID token!")
-                    }
+                if (idToken != null) {
+                    Log.d(TAG, "Got ID token.")
+                    // Используйте ID токен для аутентификации на вашем сервере
+                } else {
+                    Log.d(TAG, "No ID token!")
                 }
             } catch (e: ApiException) {
                 Log.e(TAG, "ApiException: ${e.localizedMessage}")
             }
         }
+    }
+
+    companion object {
+        private const val TAG = "LoginActivity"
     }
 }
