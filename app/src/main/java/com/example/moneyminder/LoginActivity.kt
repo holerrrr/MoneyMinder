@@ -11,6 +11,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.facebook.*
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -26,6 +29,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var oneTapClient: SignInClient
     private lateinit var signUpRequest: BeginSignInRequest
     private val REQ_ONE_TAP = 2
+    private lateinit var callbackManager: CallbackManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +38,7 @@ class LoginActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+
         }
 
         val textViewRegister = findViewById<TextView>(R.id.textViewRegister)
@@ -73,6 +78,28 @@ class LoginActivity : AppCompatActivity() {
                 }
         }
 
+        // Инициализация Facebook Login
+        callbackManager = CallbackManager.Factory.create()
+        val facebookButton = findViewById<Button>(R.id.button_facebook)
+        facebookButton.setOnClickListener {
+            LoginManager.getInstance().logInWithReadPermissions(this, listOf("email", "public_profile"))
+        }
+
+        LoginManager.getInstance().registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+            override fun onSuccess(result: LoginResult) {
+                Log.d(TAG, "Facebook token: ${result.accessToken.token}")
+                // Используйте токен для аутентификации на вашем сервере
+            }
+
+            override fun onCancel() {
+                Log.d(TAG, "Facebook login canceled")
+            }
+
+            override fun onError(error: FacebookException) {
+                Log.e(TAG, "Facebook login failed: ${error.localizedMessage}")
+            }
+        })
+
         val buttonLogin = findViewById<Button>(R.id.button_log)
         val editTextEmail = findViewById<EditText>(R.id.TextLogin)
         val editTextPassword = findViewById<EditText>(R.id.TextPassword)
@@ -104,6 +131,8 @@ class LoginActivity : AppCompatActivity() {
             } catch (e: ApiException) {
                 Log.e(TAG, "ApiException: ${e.localizedMessage}")
             }
+        } else {
+            callbackManager.onActivityResult(requestCode, resultCode, data)
         }
     }
 
