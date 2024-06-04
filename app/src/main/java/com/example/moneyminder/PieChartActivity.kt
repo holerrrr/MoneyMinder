@@ -111,11 +111,13 @@ class PieChartActivity : AppCompatActivity() {
             setHoleColor(android.R.color.transparent)
             centerText = "Expenses"
             setDrawCenterText(true)
+            setCenterTextColor(Color.WHITE)
             setCenterTextSize(20f) // Увеличиваем размер текста в центре
             legend.isEnabled = true
             legend.apply {
                 isEnabled = true
-                textSize = 14f
+                textSize = 20f
+                textColor = Color.WHITE
                 verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
                 horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
                 form = Legend.LegendForm.CIRCLE
@@ -163,7 +165,7 @@ class PieChartActivity : AppCompatActivity() {
                 val requestBody = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
                 val request = Request.Builder()
-                    .url("http://192.168.1.250/moneyminder/get_expenses.php")
+                    .url("http://192.168.1.217/moneyminder/get_expenses.php")
                     .post(requestBody)
                     .build()
 

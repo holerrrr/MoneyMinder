@@ -1,9 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.MoneyMinder" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
+    <style name="Base.Theme.MoneyMinder" parent="Theme.MaterialComponents">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
+    <style name="LoginMainSignupTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge"></style>
 
     <style name="Theme.MoneyMinder" parent="Base.Theme.MoneyMinder" />
 </resources>

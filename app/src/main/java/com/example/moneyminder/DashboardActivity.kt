@@ -81,6 +81,7 @@ class DashboardActivity : AppCompatActivity() {
             true
         }
 
+
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -167,6 +168,7 @@ class DashboardActivity : AppCompatActivity() {
                 totalTextView.text = "Total: $totalAmount"
             }
 
+
             bottomSheetDialog.dismiss()
         }
 
@@ -191,7 +193,7 @@ class DashboardActivity : AppCompatActivity() {
                 val requestBody = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
                 val request = Request.Builder()
-                    .url("http://192.168.1.250/moneyminder/get_transactions.php")
+                    .url("http://192.168.1.217/moneyminder/get_transactions.php")
                     .post(requestBody)
                     .build()
 
@@ -241,18 +243,18 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
 
-
     private fun loadCategoriesFromDatabase() {
         GlobalScope.launch(Dispatchers.IO) {
             try {
                 val client = OkHttpClient()
 
                 val request = Request.Builder()
-                    .url("http://192.168.1.250/moneyminder/get_categories.php")
+                    .url("http://192.168.1.217/moneyminder/get_categories.php")
                     .build()
 
                 val response = client.newCall(request).execute()
                 val responseBody = response.body?.string()
+
 
                 if (response.isSuccessful && !responseBody.isNullOrEmpty()) {
                     val jsonArray = JSONArray(responseBody)
@@ -287,7 +289,7 @@ class DashboardActivity : AppCompatActivity() {
                 val requestBody = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
                 val request = Request.Builder()
-                    .url("http://192.168.1.250/moneyminder/get_balance.php")
+                    .url("http://192.168.1.217/moneyminder/get_balance.php")
                     .post(requestBody)
                     .build()
 
@@ -333,11 +335,12 @@ class DashboardActivity : AppCompatActivity() {
                 val requestBody = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
                 val request = Request.Builder()
-                    .url("http://192.168.1.250/moneyminder/add_transaction.php")
+                    .url("http://192.168.1.217/moneyminder/add_transaction.php")
                     .post(requestBody)
                     .build()
 
                 val response = client.newCall(request).execute()
+
 
                 if (response.isSuccessful) {
                     // Обновляем список транзакций после успешного добавления
@@ -394,7 +397,7 @@ class DashboardActivity : AppCompatActivity() {
                 val requestBody = json.toString().toRequestBody("application/json".toMediaTypeOrNull())
 
                 val request = Request.Builder()
-                    .url("http://192.168.1.250/moneyminder/delete_transaction.php")
+                    .url("http://192.168.1.217/moneyminder/delete_transaction.php")
                     .post(requestBody)
                     .build()
 

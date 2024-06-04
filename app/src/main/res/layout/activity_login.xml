@@ -25,7 +25,7 @@
     android:id="@+id/textView4"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="TextView"
+    android:text="MoneyMinder"
     android:textColor="#d66a22"
     android:textSize="30dp"
     android:textStyle="bold"
@@ -54,21 +54,21 @@
     app:layout_constraintTop_toBottomOf="@+id/textView4"
     app:layout_constraintVertical_bias="0.175" />
 
-<EditText
-    android:id="@+id/TextPassword"
-    android:layout_width="369dp"
-    android:layout_height="48dp"
-    android:drawableStart="@drawable/password"
-    android:ems="10"
-    android:textColor="#ffffff"
-    android:hint="Password"
-    android:inputType="text"
-    android:text=""
-    android:textColorHint="#ffffff"
-    app:layout_constraintBottom_toTopOf="@+id/button_log"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/TextLogin" />
+    <EditText
+        android:id="@+id/TextPassword"
+        android:layout_width="369dp"
+        android:layout_height="48dp"
+        android:drawableStart="@drawable/password"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="text|textPassword"
+        android:text=""
+        android:textColor="#ffffff"
+        android:textColorHint="#ffffff"
+        app:layout_constraintBottom_toTopOf="@+id/button_log"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TextLogin" />
 
 <Button
     android:id="@+id/button_log"

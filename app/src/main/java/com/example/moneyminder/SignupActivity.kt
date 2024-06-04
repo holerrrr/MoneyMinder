@@ -74,7 +74,7 @@ class SignupActivity : AppCompatActivity() {
         val requestBody = json.toString().toRequestBody("application/json".toMediaType())
 
         val request = Request.Builder()
-            .url("http://192.168.1.250/moneyminder/registration.php")
+            .url("http://192.168.1.217/moneyminder/registration.php")
             .post(requestBody)
             .build()
 
