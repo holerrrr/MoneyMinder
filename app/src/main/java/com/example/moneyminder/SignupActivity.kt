@@ -90,7 +90,6 @@ class SignupActivity : AppCompatActivity() {
                 runOnUiThread {
                     if (response.isSuccessful) {
                         try {
-                            Log.d("SignupActivity", "Response body: $responseBody") // Добавлено логирование ответа
                             val jsonResponse = JSONObject(responseBody)
                             if (jsonResponse.getString("status") == "success") {
                                 val userId = jsonResponse.getInt("user_id")

@@ -42,6 +42,20 @@ class LoginActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        val buttonLogin = findViewById<Button>(R.id.button_log)
+        val editTextEmail = findViewById<EditText>(R.id.TextLogin)
+        val editTextPassword = findViewById<EditText>(R.id.TextPassword)
+
+        buttonLogin.setOnClickListener {
+            val email = editTextEmail.text.toString().trim()
+            val password = editTextPassword.text.toString().trim()
+
+            if (email.isNotEmpty() && password.isNotEmpty()) {
+                loginUser(email, password)
+            } else {
+                Toast.makeText(applicationContext, "Please enter email and password", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         val textViewRegister = findViewById<TextView>(R.id.textViewRegister)
         textViewRegister.setOnClickListener {
@@ -132,22 +146,6 @@ class LoginActivity : AppCompatActivity() {
                 Log.e(TAG, "Facebook login failed: ${error.localizedMessage}")
             }
         })
-
-        val buttonLogin = findViewById<Button>(R.id.button_log)
-        val editTextEmail = findViewById<EditText>(R.id.TextLogin)
-        val editTextPassword = findViewById<EditText>(R.id.TextPassword)
-
-        buttonLogin.setOnClickListener {
-            val email = editTextEmail.text.toString().trim()
-            val password = editTextPassword.text.toString().trim()
-
-            if (email.isNotEmpty() && password.isNotEmpty()) {
-                loginUser(email, password)
-            } else {
-                Toast.makeText(applicationContext, "Please enter email and password", Toast.LENGTH_SHORT).show()
-            }
-        }
-
     }
 
 
@@ -167,7 +165,7 @@ class LoginActivity : AppCompatActivity() {
         val requestBody = json.toString().toRequestBody("application/json".toMediaType())
 
         val request = Request.Builder()
-            .url("http://192.168.1.217/moneyminder/registration.php") // URL вашего скрипта для регистрации
+            .url("http://192.168.1.250/moneyminder/registration.php") // URL вашего скрипта для регистрации
             .post(requestBody)
             .addHeader("Content-Type", "application/json")
             .build()
@@ -200,15 +198,14 @@ class LoginActivity : AppCompatActivity() {
     private fun loginUser(email: String, password: String) {
         val client = OkHttpClient()
 
-        val json = JSONObject().apply {
-            put("email", email)
-            put("password", password)
-        }
+        val json = JSONObject()
+        json.put("email", email)
+        json.put("password", password)
 
         val requestBody = json.toString().toRequestBody("application/json".toMediaType())
 
         val request = Request.Builder()
-            .url("http://192.168.1.217/moneyminder/login.php")
+            .url("http://192.168.1.250/moneyminder/login.php")
             .post(requestBody)
             .addHeader("Content-Type", "application/json")
             .build()
@@ -229,8 +226,10 @@ class LoginActivity : AppCompatActivity() {
                         try {
                             val jsonResponse = JSONObject(responseBody)
                             if (jsonResponse.getString("status") == "success") {
+                                val userId = jsonResponse.getInt("user_id") // Получаем user ID
+                                saveUserId(userId) // Сохраняем user ID в SharedPreferences
                                 Toast.makeText(applicationContext, "Login successful", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(this@LoginActivity, DashboardActivity::class.java) // Replace with your next screen
+                                val intent = Intent(this@LoginActivity, DashboardActivity::class.java)
                                 startActivity(intent)
                             } else {
                                 Toast.makeText(applicationContext, "Login failed: ${jsonResponse.getString("message")}", Toast.LENGTH_SHORT).show()
@@ -246,11 +245,16 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         })
-
     }
 
     companion object {
         private const val TAG = "LoginActivity"
         private const val REQ_ONE_TAP = 2
+    }
+    private fun saveUserId(userId: Int) {
+        val sharedPreferences = getSharedPreferences("MoneyMinderPrefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt("user_id", userId)
+        editor.apply()
     }
 }

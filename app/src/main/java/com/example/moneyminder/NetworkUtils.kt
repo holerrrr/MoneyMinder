@@ -20,7 +20,7 @@ object NetworkUtils {
     }
 
     fun addIncome(context: Context, userId: Int, sum: Double, listener: Response.Listener<String>, errorListener: Response.ErrorListener) {
-        val url = "http://192.168.1.217/moneyminder/add_income.php"
+        val url = "http://192.168.1.250/moneyminder/add_income.php"
         val params = HashMap<String, String>()
         params["user_id"] = userId.toString()
         params["sum"] = sum.toString()
@@ -33,7 +33,7 @@ object NetworkUtils {
     }
 
     fun addExpense(context: Context, userId: Int, categoryId: Int, sum: Double, listener: Response.Listener<String>, errorListener: Response.ErrorListener) {
-        val url = "http://192.168.1.217/moneyminder/add_expense.php"
+        val url = "http://192.168.1.250/moneyminder/add_expense.php"
         val params = HashMap<String, String>()
         params["user_id"] = userId.toString()
         params["category_id"] = categoryId.toString()
@@ -47,7 +47,7 @@ object NetworkUtils {
     }
 
     fun getBalance(context: Context, userId: Int, listener: Response.Listener<JSONObject>, errorListener: Response.ErrorListener) {
-        val url = "http://192.168.1.217/moneyminder/get_balance.php"
+        val url = "http://192.168.1.250/moneyminder/get_balance.php"
         val params = HashMap<String, String>()
         params["user_id"] = userId.toString()
 
